@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-canvas-bg: #fafafa;
+  --color-canvas-purple: #7c3aed;
+  --color-canvas-purple-light: #ede9fe;
+  --color-canvas-purple-border: #c4b5fd;
+  --color-canvas-purple-dark: #5b21b6;
+  --color-canvas-green: #16a34a;
+  --color-canvas-orange: #ea580c;
+  --color-canvas-red: #dc2626;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--color-canvas-bg);
+  color: #171717;
+  font-family: var(--font-sans);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-left {
+  animation: slide-in-left 0.25s ease-out;
+}
+
+.animate-slide-right {
+  animation: slide-in-right 0.25s ease-out;
 }
