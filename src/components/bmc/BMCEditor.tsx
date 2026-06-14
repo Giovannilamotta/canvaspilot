@@ -9,12 +9,12 @@ export default function BMCEditor() {
 
   const gridOrder: BlockId[] = [
     "keyPartnerships",
-    "keyActivities",
     "valuePropositions",
     "customerRelationships",
+    "keyActivities",
+    "channels",
     "customerSegments",
     "keyResources",
-    "channels",
     "costStructure",
     "revenueStreams",
   ];
@@ -24,42 +24,19 @@ export default function BMCEditor() {
       <div
         className="grid gap-3 mx-auto"
         style={{
-          gridTemplateColumns: "repeat(5, 1fr)",
+          gridTemplateColumns: "repeat(3, 1fr)",
           gridTemplateRows: "repeat(3, 1fr)",
           minHeight: "calc(100vh - 140px)",
-          maxWidth: "1600px",
+          maxWidth: "1400px",
         }}
       >
-        {gridOrder.map((id, i) => {
+        {gridOrder.map((id) => {
           const block = canvas.blocks[id];
           const meta = BMC_BLOCKS.find((b) => b.id === id);
           const colorClass = meta?.color ?? "purple";
 
-          let row = 1;
-          let col = 3;
-          let spanCol = 1;
-          let spanRow = 1;
-
-          switch (id) {
-            case "keyPartnerships": row = 1; col = 1; break;
-            case "keyActivities": row = 2; col = 1; break;
-            case "keyResources": row = 3; col = 1; break;
-            case "valuePropositions": row = 1; col = 2; spanCol = 2; spanRow = 3; break;
-            case "customerRelationships": row = 1; col = 4; break;
-            case "customerSegments": row = 2; col = 4; spanRow = 2; break;
-            case "channels": row = 3; col = 4; break;
-            case "costStructure": row = 1; col = 5; spanRow = 2; break;
-            case "revenueStreams": row = 3; col = 5; break;
-          }
-
           return (
-            <div
-              key={id}
-              style={{
-                gridColumn: `${col} / span ${spanCol}`,
-                gridRow: `${row} / span ${spanRow}`,
-              }}
-            >
+            <div key={id}>
               <BMCBlock block={block} colorClass={colorClass} />
             </div>
           );

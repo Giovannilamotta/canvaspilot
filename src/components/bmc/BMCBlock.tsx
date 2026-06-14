@@ -24,23 +24,23 @@ export default function BMCBlock({ block, colorClass }: Props) {
   };
 
   const bgClass = colorClass === "purple"
-    ? "bg-purple-50 border-purple-200"
+    ? "bg-purple-100/60 border-purple-300"
     : colorClass === "indigo"
-      ? "bg-indigo-50 border-indigo-200"
+      ? "bg-indigo-100/60 border-indigo-300"
       : colorClass === "violet"
-        ? "bg-violet-50 border-violet-200"
-        : "bg-fuchsia-50 border-fuchsia-200";
+        ? "bg-violet-100/60 border-violet-300"
+        : "bg-fuchsia-100/60 border-fuchsia-300";
 
   const headerBg = colorClass === "purple"
-    ? "bg-purple-100"
+    ? "bg-purple-200"
     : colorClass === "indigo"
-      ? "bg-indigo-100"
+      ? "bg-indigo-200"
       : colorClass === "violet"
-        ? "bg-violet-100"
-        : "bg-fuchsia-100";
+        ? "bg-violet-200"
+        : "bg-fuchsia-200";
 
   return (
-    <div className={`flex flex-col rounded-xl border ${bgClass} overflow-hidden h-full`}>
+    <div className={`flex flex-col rounded-xl border ${bgClass} overflow-hidden h-full shadow-sm`}>
       <div className={`px-3 py-2 ${headerBg} flex items-center justify-between`}>
         <h3 className="text-[11px] font-semibold text-gray-800 leading-tight">
           {block.title}

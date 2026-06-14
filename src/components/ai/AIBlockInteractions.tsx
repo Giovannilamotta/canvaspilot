@@ -5,6 +5,7 @@ import { BlockId } from "@/types";
 import { useCanvasStore } from "@/stores/canvas";
 import { useAIConfigStore } from "@/stores/aiConfig";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { useAIFeedbackStore } from "@/stores/aiFeedback";
 import { buildBlockContext } from "@/lib/score";
 import { AIInteractionType } from "@/types";
 
@@ -13,22 +14,43 @@ interface Props {
   blockTitle: string;
 }
 
+function parseAIResponse(text: string): string[] {
+  const clean = text.trim();
+  const numberedMatch = clean.match(/(?:\d+[.)]\s+)(.*?)(?=(?:\n\d+[.)]\s+)|\n\n|$)/gs);
+  if (numberedMatch && numberedMatch.length >= 1) {
+    return numberedMatch
+      .map((s) => s.replace(/^\d+[.)]\s+/, "").trim())
+      .filter((s) => s.length > 3);
+  }
+  const lines = clean.split("\n");
+  const bulletLines = lines.filter((l) => /^[-•*]\s/.test(l.trim()));
+  if (bulletLines.length >= 1) {
+    return bulletLines
+      .map((s) => s.replace(/^[-•*]\s+/, "").trim())
+      .filter((s) => s.length > 3);
+  }
+  return lines.map((s) => s.trim()).filter((s) => s.length > 5);
+}
+
 export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
   const { config } = useAIConfigStore();
   const { canvas } = useCanvasStore();
   const { data: onboarding } = useOnboardingStore();
-  const [result, setResult] = useState("");
+  const setFeedback = useAIFeedbackStore((s) => s.setFeedback);
   const [loading, setLoading] = useState<AIInteractionType | null>(null);
-  const [error, setError] = useState("");
-  const [showResult, setShowResult] = useState(false);
 
   const runInteraction = async (type: AIInteractionType) => {
     if (!config.apiKey) {
-      setError("Set API key in AI Settings");
+      setFeedback({
+        type: null,
+        blockId: null,
+        blockTitle: "",
+        items: [],
+        rawResult: "⚠️ Configura prima le impostazioni AI (⚙️ nella sidebar)",
+      });
       return;
     }
     setLoading(type);
-    setError("");
     try {
       const blockContext = buildBlockContext(blockId, canvas);
       const ideaContext = onboarding.businessIdea
@@ -53,63 +75,44 @@ export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      setResult(data.result);
-      setShowResult(true);
+
+      const items = parseAIResponse(data.result);
+      setFeedback({
+        type,
+        blockId,
+        blockTitle,
+        items,
+        rawResult: data.result,
+      });
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Unknown error");
+      setFeedback({
+        type: null,
+        blockId: null,
+        blockTitle: "",
+        items: [],
+        rawResult: `❌ ${e instanceof Error ? e.message : "Errore sconosciuto"}`,
+      });
     } finally {
       setLoading(null);
     }
   };
 
   return (
-    <div>
-      <div className="flex gap-1 mt-2 pt-2 border-t border-gray-100">
-        <button
-          onClick={() => runInteraction("suggestions")}
-          disabled={loading !== null}
-          className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
-        >
-          {loading === "suggestions" ? "..." : "💡 Suggerimenti"}
-        </button>
-        <button
-          onClick={() => runInteraction("questionnaire")}
-          disabled={loading !== null}
-          className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
-        >
-          {loading === "questionnaire" ? "..." : "❓ Domande"}
-        </button>
-        <button
-          onClick={() =>
-            runInteraction("suggestions")
-          }
-          disabled={loading !== null}
-          className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
-        >
-          🤖 AI
-        </button>
-      </div>
-
-      {showResult && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[70vh] flex flex-col animate-fade-in">
-            <div className="flex items-center justify-between p-4 pb-3 border-b border-gray-100">
-              <h3 className="text-sm font-semibold text-purple-900">
-                {blockTitle} — AI
-              </h3>
-              <button
-                onClick={() => setShowResult(false)}
-                className="text-gray-400 hover:text-gray-600 text-sm"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-4 overflow-y-auto text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {error ? <p className="text-red-500">{error}</p> : result}
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="flex gap-1 mt-2 pt-2 border-t border-gray-100">
+      <button
+        onClick={() => runInteraction("suggestions")}
+        disabled={loading !== null}
+        className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+      >
+        {loading === "suggestions" ? "..." : "💡 Suggerimenti"}
+      </button>
+      <button
+        onClick={() => runInteraction("questionnaire")}
+        disabled={loading !== null}
+        className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+      >
+        {loading === "questionnaire" ? "..." : "❓ Domande"}
+      </button>
     </div>
   );
 }

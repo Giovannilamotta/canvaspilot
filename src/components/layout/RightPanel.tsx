@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AIAnalysis from "@/components/ai/AIAnalysis";
+import AIFeedbackPanel from "@/components/ai/AIFeedbackPanel";
 import VersionPanel from "@/components/versioning/VersionPanel";
 import BranchPanel from "@/components/branching/BranchPanel";
 import AIFillCanvas from "@/components/ai/AIFillCanvas";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { useAIFeedbackStore } from "@/stores/aiFeedback";
 
-type Panel = "versions" | "branches" | "analysis" | "idea" | null;
+type Panel = "versions" | "branches" | "idea" | "ai" | "analysis" | null;
 
 export default function RightPanel() {
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const { data } = useOnboardingStore();
+  const notifyCount = useAIFeedbackStore((s) => s.notifyCount);
+
+  useEffect(() => {
+    if (notifyCount > 0) {
+      setActivePanel("ai");
+    }
+  }, [notifyCount]);
 
   return (
     <div className="w-80 shrink-0 bg-white border-l border-gray-200 flex flex-col hidden lg:flex">
@@ -45,6 +54,16 @@ export default function RightPanel() {
           }`}
         >
           Idea
+        </button>
+        <button
+          onClick={() => setActivePanel(activePanel === "ai" ? null : "ai")}
+          className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
+            activePanel === "ai"
+              ? "text-purple-700 border-b-2 border-purple-500"
+              : "text-gray-400 hover:text-gray-600"
+          }`}
+        >
+          AI
         </button>
         <button
           onClick={() => setActivePanel(activePanel === "analysis" ? null : "analysis")}
@@ -86,6 +105,7 @@ export default function RightPanel() {
             )}
           </div>
         )}
+        {activePanel === "ai" && <AIFeedbackPanel />}
         {activePanel === "analysis" && (
           <div className="p-4">
             <h3 className="text-sm font-semibold text-gray-800 mb-3">Analysis</h3>
