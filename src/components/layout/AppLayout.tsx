@@ -11,6 +11,7 @@ import VersionPanel from "@/components/versioning/VersionPanel";
 import BranchPanel from "@/components/branching/BranchPanel";
 import StartupWizard from "@/components/wizard/StartupWizard";
 import AISettings from "@/components/ai/AISettings";
+import UserMenu from "@/components/auth/UserMenu";
 import { useCanvasStore } from "@/stores/canvas";
 import { useBranchStore } from "@/stores/branches";
 
@@ -58,6 +59,7 @@ export default function AppLayout() {
         <div className="flex items-center gap-1.5">
           <AIFillCanvas />
           <AIAnalysis />
+          <UserMenu />
         </div>
       </header>
 
