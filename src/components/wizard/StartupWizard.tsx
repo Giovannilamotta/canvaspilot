@@ -77,7 +77,7 @@ const steps: StepConfig[] = [
 ];
 
 export default function StartupWizard() {
-  const { data, completed, isOpen, setField, complete, close } = useOnboardingStore();
+  const { data, isOpen, setField, complete, close } = useOnboardingStore();
   const [step, setStep] = useState(0);
 
   if (!isOpen) return null;

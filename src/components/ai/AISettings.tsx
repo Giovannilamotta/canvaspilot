@@ -51,32 +51,6 @@ export default function AISettings() {
     }
   };
 
-  const handleTestConnection = async () => {
-    if (!config.apiKey) return;
-    setConnectionStatus("testing");
-    setConnectionError("");
-    try {
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: "ping" }],
-          config,
-        }),
-      });
-      const data = await response.json();
-      if (data.error) {
-        setConnectionStatus("error");
-        setConnectionError(data.error);
-      } else {
-        setConnectionStatus("success");
-      }
-    } catch {
-      setConnectionStatus("error");
-      setConnectionError("Impossibile connettersi al server");
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
@@ -163,31 +137,6 @@ export default function AISettings() {
             />
           </div>
         </div>
-
-        <button
-          onClick={handleTestConnection}
-          disabled={!config.apiKey || connectionStatus === "testing"}
-          className={`mt-3 w-full py-2 rounded-lg text-xs font-medium border transition-all ${
-            connectionStatus === "success"
-              ? "bg-green-50 border-green-300 text-green-700"
-              : connectionStatus === "error"
-                ? "bg-red-50 border-red-300 text-red-700"
-                : "bg-white border-gray-200 text-gray-600 hover:border-purple-300 hover:text-purple-700 disabled:opacity-40"
-          }`}
-        >
-          {connectionStatus === "testing" ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-              Test in corso...
-            </span>
-          ) : connectionStatus === "success" ? (
-            "✓ Connessione OK"
-          ) : connectionStatus === "error" ? (
-            `✗ ${connectionError || "Connessione fallita"}`
-          ) : (
-            "⚡ Test Connessione"
-          )}
-        </button>
 
         <div className="flex gap-2 mt-4">
           <button
