@@ -41,6 +41,7 @@ export interface OnboardingData {
   phase: Phase;
   geography: Geography;
   businessModel: BusinessModel;
+  businessIdea: string;
 }
 
 export type BlockId =

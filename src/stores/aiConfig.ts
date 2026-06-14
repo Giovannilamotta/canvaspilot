@@ -33,7 +33,7 @@ function getDefaultBaseUrl(provider: AIProvider): string {
 
 function getDefaultModel(provider: AIProvider): string {
   switch (provider) {
-    case "openrouter": return "openrouter/auto";
+    case "openrouter": return "google/gemini-2.0-flash-001";
     case "openai": return "gpt-4o";
     case "gemini": return "gemini-2.0-flash";
     case "ollama": return "llama3";

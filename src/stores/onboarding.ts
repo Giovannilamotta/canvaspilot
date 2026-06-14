@@ -19,6 +19,7 @@ const defaultData: OnboardingData = {
   phase: "idea",
   geography: "local",
   businessModel: "b2b",
+  businessIdea: "",
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(

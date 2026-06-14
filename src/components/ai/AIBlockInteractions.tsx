@@ -31,12 +31,15 @@ export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
     setError("");
     try {
       const blockContext = buildBlockContext(blockId, canvas);
+      const ideaContext = onboarding.businessIdea
+        ? `\nBusiness Idea context: ${onboarding.businessIdea}`
+        : "";
       let prompt = "";
 
       if (type === "suggestions") {
-        prompt = `You are a startup advisor helping improve a Business Model Canvas for a ${onboarding.startupType} startup in ${onboarding.industry} at ${onboarding.phase} stage. Give 2-3 specific, concrete suggestions to improve the "${blockTitle}" block. Respond in Italian. Only suggest items that are NOT already listed.\n\nCurrent content:\n${blockContext}`;
+        prompt = `You are a startup advisor helping improve a Business Model Canvas for a ${onboarding.startupType} startup in ${onboarding.industry} at ${onboarding.phase} stage.${ideaContext}\n\nGive 2-3 specific, concrete suggestions to improve the "${blockTitle}" block. Respond in Italian. Only suggest items that are NOT already listed.\n\nCurrent content:\n${blockContext}`;
       } else {
-        prompt = `You are a startup advisor. Ask 3 critical, thought-provoking questions about the "${blockTitle}" block of this Business Model Canvas. Questions should challenge assumptions and push for deeper thinking. Respond in Italian.\n\nCurrent content:\n${blockContext}`;
+        prompt = `You are a startup advisor. Ask 3 critical, thought-provoking questions about the "${blockTitle}" block of this Business Model Canvas. Questions should challenge assumptions and push for deeper thinking.${ideaContext}\n\nRespond in Italian.\n\nCurrent content:\n${blockContext}`;
       }
 
       const response = await fetch("/api/ai", {

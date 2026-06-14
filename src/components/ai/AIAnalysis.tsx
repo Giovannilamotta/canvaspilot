@@ -24,7 +24,10 @@ export default function AIAnalysis() {
     setError("");
     try {
       const canvasContext = buildCanvasContext(canvas);
-      const prompt = `You are a startup advisor. Review the following Business Model Canvas for a ${onboarding.startupType} startup in the ${onboarding.industry} industry, at ${onboarding.phase} stage, targeting ${onboarding.geography} market, using a ${onboarding.businessModel} model.
+      const ideaContext = onboarding.businessIdea
+        ? `\n\nBusiness Idea: ${onboarding.businessIdea}`
+        : "";
+      const prompt = `You are a startup advisor. Review the following Business Model Canvas for a ${onboarding.startupType} startup in the ${onboarding.industry} industry, at ${onboarding.phase} stage, targeting ${onboarding.geography} market, using a ${onboarding.businessModel} model.${ideaContext}
 
 Analyze the BMC for:
 1. Mismatches or contradictions between blocks

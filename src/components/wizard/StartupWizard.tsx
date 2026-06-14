@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { StartupType, Industry, Phase, Geography, BusinessModel } from "@/types";
 
-const steps = [
+type StepType =
+  | { title: string; field: keyof typeof import("@/stores/onboarding").default; options: { value: string; label: string }[] }
+  | { title: string; field: "businessIdea" };
+
+const steps: StepType[] = [
   {
     title: "Tipo di Startup",
     field: "startupType" as const,
@@ -62,6 +66,10 @@ const steps = [
       { value: "commission" as BusinessModel, label: "Commission" },
     ],
   },
+  {
+    title: "La tua Idea di Business",
+    field: "businessIdea" as const,
+  },
 ];
 
 export default function StartupWizard() {
@@ -71,7 +79,7 @@ export default function StartupWizard() {
   if (!isOpen) return null;
 
   const current = steps[step];
-  const value = data[current.field];
+  const isIdeaStep = current.field === "businessIdea";
 
   const next = () => {
     if (step < steps.length - 1) {
@@ -113,21 +121,36 @@ export default function StartupWizard() {
           Step {step + 1} of {steps.length} — {current.title}
         </h3>
 
-        <div className="grid grid-cols-2 gap-2 mb-8">
-          {current.options.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setField(current.field, opt.value)}
-              className={`px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all ${
-                value === opt.value
-                  ? "border-purple-500 bg-purple-50 text-purple-700 shadow-sm"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-purple-200 hover:bg-purple-50/50"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        {isIdeaStep ? (
+          <div className="mb-8">
+            <p className="text-xs text-gray-400 mb-2">
+              Descrivi la tua idea di business in modo che l&apos;AI possa aiutarti a popolare il canvas e darti feedback mirati.
+            </p>
+            <textarea
+              value={data.businessIdea}
+              onChange={(e) => setField("businessIdea", e.target.value)}
+              placeholder="Es: Una piattaforma SaaS che aiuta i ristoranti a gestire le prenotazioni e ottimizzare i tavoli con AI predittiva..."
+              rows={5}
+              className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 resize-none"
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 mb-8">
+            {"options" in current && current.options.map((opt: { value: string; label: string }) => (
+              <button
+                key={opt.value}
+                onClick={() => setField(current.field as keyof typeof data, opt.value as never)}
+                className={`px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all ${
+                  data[current.field as keyof typeof data] === opt.value
+                    ? "border-purple-500 bg-purple-50 text-purple-700 shadow-sm"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-purple-200 hover:bg-purple-50/50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="flex justify-between">
           <button
