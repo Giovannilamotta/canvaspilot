@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { useOnboardingStore } from "@/stores/onboarding";
-import { StartupType, Industry, Phase, Geography, BusinessModel } from "@/types";
+import { StartupType, Industry, Phase, Geography, BusinessModel, OnboardingData } from "@/types";
 
-type StepType =
-  | { title: string; field: keyof typeof import("@/stores/onboarding").default; options: { value: string; label: string }[] }
-  | { title: string; field: "businessIdea" };
+type StepField = keyof OnboardingData;
 
-const steps: StepType[] = [
+type StepConfig = {
+  title: string;
+  field: StepField;
+  options?: { value: string; label: string }[];
+};
+
+const steps: StepConfig[] = [
   {
     title: "Tipo di Startup",
     field: "startupType" as const,
@@ -136,12 +140,12 @@ export default function StartupWizard() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2 mb-8">
-            {"options" in current && current.options.map((opt: { value: string; label: string }) => (
+            {current.options?.map((opt) => (
               <button
                 key={opt.value}
-                onClick={() => setField(current.field as keyof typeof data, opt.value as never)}
+                onClick={() => setField(current.field, opt.value as never)}
                 className={`px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all ${
-                  data[current.field as keyof typeof data] === opt.value
+                  data[current.field] === opt.value
                     ? "border-purple-500 bg-purple-50 text-purple-700 shadow-sm"
                     : "border-gray-200 bg-white text-gray-700 hover:border-purple-200 hover:bg-purple-50/50"
                 }`}

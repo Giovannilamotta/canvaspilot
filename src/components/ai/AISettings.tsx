@@ -16,9 +16,7 @@ export default function AISettings() {
   const { config, isOpen, setProvider, setApiKey, setBaseUrl, setModel, close } =
     useAIConfigStore();
   const [saved, setSaved] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<
-    "idle" | "testing" | "success" | "error"
-  >("idle");
+  const [connectionStatus, setConnectionStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
   const [connectionError, setConnectionError] = useState("");
 
   if (!isOpen) return null;
@@ -27,6 +25,30 @@ export default function AISettings() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     setTimeout(close, 800);
+  };
+
+  const testConnection = async () => {
+    setConnectionStatus("testing");
+    setConnectionError("");
+    try {
+      const response = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "ping" }],
+          config,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || data.error) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+      setConnectionStatus("success");
+      setTimeout(() => setConnectionStatus("idle"), 3000);
+    } catch (e: unknown) {
+      setConnectionStatus("error");
+      setConnectionError(e instanceof Error ? e.message : "Connessione fallita");
+    }
   };
 
   const handleTestConnection = async () => {
@@ -167,10 +189,34 @@ export default function AISettings() {
           )}
         </button>
 
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={testConnection}
+            disabled={connectionStatus === "testing" || !config.apiKey}
+            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all border ${
+              connectionStatus === "success"
+                ? "bg-green-50 border-green-300 text-green-700"
+                : connectionStatus === "error"
+                  ? "bg-red-50 border-red-300 text-red-700"
+                  : "bg-white border-gray-200 text-gray-600 hover:border-purple-300 hover:text-purple-600 disabled:opacity-40"
+            }`}
+          >
+            {connectionStatus === "testing"
+              ? "Testing..."
+              : connectionStatus === "success"
+                ? "✓ Connessione OK"
+                : connectionStatus === "error"
+                  ? "✗ Connessione fallita"
+                  : "Test Connection"}
+          </button>
+        </div>
+        {connectionStatus === "error" && connectionError && (
+          <p className="mt-2 text-xs text-red-500">{connectionError}</p>
+        )}
         <button
           onClick={handleSave}
           disabled={!config.apiKey}
-          className={`mt-2 w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
+          className={`mt-3 w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
             saved
               ? "bg-green-500 text-white"
               : "bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-40"
