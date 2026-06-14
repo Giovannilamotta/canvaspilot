@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCanvasStore } from "@/stores/canvas";
 import { useAIConfigStore } from "@/stores/aiConfig";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { canMakeAICall, trackAICall } from "@/lib/monetization";
 import { BlockId, CanvasData } from "@/types";
 
 function generateId() {
@@ -53,6 +54,11 @@ export default function AIFillCanvas({ className = "" }: Props) {
       setError("Descrivi prima la tua idea di business nel wizard");
       return;
     }
+    const usageCheck = await canMakeAICall();
+    if (!usageCheck.allowed) {
+      setError(usageCheck.message || "Limite raggiunto");
+      return;
+    }
     setLoading(true);
     setError("");
     setShowConfirm(false);
@@ -97,6 +103,7 @@ Each "items" array must contain 2-4 specific, concrete items in Italian language
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
+      trackAICall();
       const parsed = extractJSON(data.result);
       if (!parsed || !parsed.blocks) {
         throw new Error("Impossibile interpretare la risposta AI. Riprova.");

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { AIConfig, AIProvider } from "@/types";
 
 interface AIConfigStore {
@@ -9,6 +8,8 @@ interface AIConfigStore {
   setApiKey: (apiKey: string) => void;
   setBaseUrl: (baseUrl: string) => void;
   setModel: (model: string) => void;
+  loadFromData: (data: { provider: string; apiKey: string; model: string }) => void;
+  saveToServer: () => Promise<void>;
   open: () => void;
   close: () => void;
   toggle: () => void;
@@ -41,30 +42,46 @@ function getDefaultModel(provider: AIProvider): string {
   }
 }
 
-export const useAIConfigStore = create<AIConfigStore>()(
-  persist(
-    (set, get) => ({
-      config: { ...defaultConfig },
-      isOpen: false,
-      setProvider: (provider) =>
-        set((s) => ({
-          config: {
-            ...s.config,
-            provider,
-            baseUrl: getDefaultBaseUrl(provider),
-            model: getDefaultModel(provider),
-          },
-        })),
-      setApiKey: (apiKey) =>
-        set((s) => ({ config: { ...s.config, apiKey } })),
-      setBaseUrl: (baseUrl) =>
-        set((s) => ({ config: { ...s.config, baseUrl } })),
-      setModel: (model) =>
-        set((s) => ({ config: { ...s.config, model } })),
-      open: () => set({ isOpen: true }),
-      close: () => set({ isOpen: false }),
-      toggle: () => set((s) => ({ isOpen: !s.isOpen })),
+export const useAIConfigStore = create<AIConfigStore>()((set, get) => ({
+  config: { ...defaultConfig },
+  isOpen: false,
+  setProvider: (provider) =>
+    set((s) => ({
+      config: {
+        ...s.config,
+        provider,
+        baseUrl: getDefaultBaseUrl(provider),
+        model: getDefaultModel(provider),
+      },
+    })),
+  setApiKey: (apiKey) =>
+    set((s) => ({ config: { ...s.config, apiKey } })),
+  setBaseUrl: (baseUrl) =>
+    set((s) => ({ config: { ...s.config, baseUrl } })),
+  setModel: (model) =>
+    set((s) => ({ config: { ...s.config, model } })),
+  loadFromData: (data) =>
+    set({
+      config: {
+        provider: (data.provider as AIProvider) || "openrouter",
+        apiKey: data.apiKey || "",
+        baseUrl: getDefaultBaseUrl((data.provider as AIProvider) || "openrouter"),
+        model: data.model || "",
+      },
     }),
-    { name: "canvaspilot-aiconfig" }
-  )
-);
+  saveToServer: async () => {
+    const { config } = get();
+    await fetch("/api/ai-config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: config.provider,
+        apiKey: config.apiKey,
+        model: config.model,
+      }),
+    });
+  },
+  open: () => set({ isOpen: true }),
+  close: () => set({ isOpen: false }),
+  toggle: () => set((s) => ({ isOpen: !s.isOpen })),
+}));

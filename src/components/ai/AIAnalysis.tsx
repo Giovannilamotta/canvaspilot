@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCanvasStore } from "@/stores/canvas";
 import { useAIConfigStore } from "@/stores/aiConfig";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { canMakeAICall, trackAICall } from "@/lib/monetization";
 import { buildCanvasContext } from "@/lib/score";
 
 export default function AIAnalysis() {
@@ -18,6 +19,11 @@ export default function AIAnalysis() {
   const runAnalysis = async () => {
     if (!config.apiKey) {
       setError("Configure AI settings first");
+      return;
+    }
+    const usageCheck = await canMakeAICall();
+    if (!usageCheck.allowed) {
+      setError(usageCheck.message || "Limite raggiunto");
       return;
     }
     setLoading(true);
@@ -50,6 +56,7 @@ Canvas:\n\n${canvasContext}`;
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);
+      trackAICall();
       setResult(data.result);
       setIsOpen(true);
     } catch (e: unknown) {

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useCanvasStore } from "@/stores/canvas";
 import { useAIConfigStore } from "@/stores/aiConfig";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useThemeStore } from "@/stores/theme";
+import { checkUserRole } from "@/lib/roles";
 
 export default function Sidebar() {
   const { reset, saveVersion } = useCanvasStore();
@@ -12,6 +14,11 @@ export default function Sidebar() {
   const { open: openWizard } = useOnboardingStore();
   const { theme, toggle: toggleTheme } = useThemeStore();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    checkUserRole().then((r) => setIsAdmin(r.isAdmin));
+  }, []);
 
   const handleReset = () => {
     reset();
@@ -25,6 +32,14 @@ export default function Sidebar() {
         <span className="text-[8px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-full px-1.5 py-px">
           BETA
         </span>
+
+        <Link
+          href="/guide"
+          title="Guida"
+          className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
+        >
+          📖
+        </Link>
 
         <button
           onClick={openWizard}
@@ -49,6 +64,16 @@ export default function Sidebar() {
         >
           ⚙️
         </button>
+
+        {isAdmin && (
+          <Link
+            href="/admin"
+            title="Admin Dashboard"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-amber-500 dark:text-amber-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
+          >
+            🛡️
+          </Link>
+        )}
 
         <div className="mt-auto flex flex-col items-center gap-3">
           <button

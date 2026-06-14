@@ -7,6 +7,7 @@ import { useAIConfigStore } from "@/stores/aiConfig";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useAIFeedbackStore } from "@/stores/aiFeedback";
 import { buildBlockContext } from "@/lib/score";
+import { canMakeAICall, trackAICall } from "@/lib/monetization";
 import { AIInteractionType } from "@/types";
 
 interface Props {
@@ -50,6 +51,14 @@ export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
       });
       return;
     }
+    const usageCheck = await canMakeAICall();
+    if (!usageCheck.allowed) {
+      setFeedback({
+        type: null, blockId: null, blockTitle: "",
+        items: [], rawResult: `⚠️ ${usageCheck.message}`,
+      });
+      return;
+    }
     setLoading(type);
     try {
       const blockContext = buildBlockContext(blockId, canvas);
@@ -76,6 +85,7 @@ export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
+      trackAICall();
       const items = parseAIResponse(data.result);
       setFeedback({
         type,

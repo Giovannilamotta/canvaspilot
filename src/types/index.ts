@@ -86,6 +86,7 @@ export interface Branch {
   canvas: CanvasData;
   versions: Version[];
   createdAt: number;
+  is_active?: boolean;
 }
 
 export type AIProvider =

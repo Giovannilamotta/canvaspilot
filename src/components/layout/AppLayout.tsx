@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Sidebar from "@/components/sidebar/Sidebar";
 import BMCEditor from "@/components/bmc/BMCEditor";
 import ValidityScore from "@/components/score/ValidityScore";
@@ -12,20 +13,18 @@ import BranchPanel from "@/components/branching/BranchPanel";
 import StartupWizard from "@/components/wizard/StartupWizard";
 import AISettings from "@/components/ai/AISettings";
 import UserMenu from "@/components/auth/UserMenu";
-import { useCanvasStore } from "@/stores/canvas";
-import { useBranchStore } from "@/stores/branches";
+import { checkUserRole } from "@/lib/roles";
 
 type MobilePanel = "versions" | "branches" | "analysis" | null;
 
 export default function AppLayout() {
-  const { canvas } = useCanvasStore();
-  const { initMainBranch } = useBranchStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
   const [floatingOpen, setFloatingOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    initMainBranch(canvas);
+    checkUserRole().then((r) => setIsAdmin(r.isAdmin));
   }, []);
 
   return (
@@ -59,6 +58,14 @@ export default function AppLayout() {
         <div className="flex items-center gap-1.5">
           <AIFillCanvas />
           <AIAnalysis />
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="px-2 py-1 text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+            >
+              Admin
+            </Link>
+          )}
           <UserMenu />
         </div>
       </header>

@@ -21,7 +21,8 @@
 | State Management | Zustand | 5.0.14 |
 | Icone | Lucide React | 1.17.0 |
 | AI Provider | OpenRouter, OpenAI, Gemini, Ollama, Custom | — |
-| Persistenza | localStorage (Zustand persist) | — |
+| Auth | Supabase Auth (email/password) | — |
+| Database | Supabase PostgreSQL + RLS | — |
 | Deploy | Vercel | — |
 
 ---
@@ -32,43 +33,70 @@
 canvaspilot/
 ├── src/
 │   ├── app/
-│   │   ├── api/ai/route.ts         # Endpoint proxy per chiamate AI
-│   │   ├── globals.css              # Tailwind + theme custom (palette purple)
-│   │   ├── layout.tsx               # Root layout (font Geist, metadata)
-│   │   └── page.tsx                 # Entry point → AppLayout
+│   │   ├── (auth)/
+│   │   │   ├── layout.tsx           # Layout pagine auth
+│   │   │   ├── login/page.tsx       # Login (email/password)
+│   │   │   └── signup/page.tsx      # Registrazione
+│   │   ├── api/
+│   │   │   ├── ai/route.ts          # Endpoint proxy per chiamate AI
+│   │   │   ├── ai-config/route.ts   # GET/PUT configurazione AI per utente
+│   │   │   ├── branches/
+│   │   │   │   ├── route.ts         # GET/POST lista branch
+│   │   │   │   └── [id]/route.ts    # PUT/DELETE branch singolo
+│   │   │   ├── canvas/route.ts      # GET/PUT canvas branch attivo
+│   │   │   └── onboarding/route.ts  # GET/PUT dati wizard
+│   │   ├── globals.css              # Tailwind + theme custom + @variant dark
+│   │   ├── layout.tsx               # Root layout (font Geist, ThemeProvider)
+│   │   └── page.tsx                 # Entry point → DataLoader → AppLayout
 │   ├── components/
 │   │   ├── ai/
 │   │   │   ├── AIAnalysis.tsx       # Analisi completa del canvas
-│   │   │   ├── AIBlockInteractions.tsx  # Suggerimenti/domande per blocco
+│   │   │   ├── AIBlockInteractions.tsx  # Suggerimenti/domande → pannello AI
+│   │   │   ├── AIFeedbackPanel.tsx  # Pannello feedback AI nel RightPanel
 │   │   │   ├── AIFillCanvas.tsx     # Compilazione automatica BMC da idea
 │   │   │   └── AISettings.tsx       # Configurazione provider AI + test connessione
+│   │   ├── auth/
+│   │   │   └── UserMenu.tsx         # Avatar utente + logout nell'header
 │   │   ├── bmc/
 │   │   │   ├── BMCBlock.tsx         # Singolo blocco del canvas (item, note, validazione)
-│   │   │   └── BMCEditor.tsx        # Griglia 5×3 del BMC
+│   │   │   └── BMCEditor.tsx        # Griglia 3×3 bilanciata
 │   │   ├── branching/
 │   │   │   └── BranchPanel.tsx      # Creazione e gestione branch paralleli
 │   │   ├── layout/
 │   │   │   ├── AppLayout.tsx        # Layout principale (header, sidebar, griglia, pannello DX)
-│   │   │   └── RightPanel.tsx       # Pannello destro: Versioni, Branch, Idea, Analisi
+│   │   │   ├── DataLoader.tsx       # Carica dati utente da Supabase all'avvio
+│   │   │   ├── RightPanel.tsx       # Pannello destro: 5 tab (Vers, Branch, Idea, AI, Analysis)
+│   │   │   └── ThemeProvider.tsx    # Applica classe dark al <html>
 │   │   ├── score/
 │   │   │   └── ValidityScore.tsx    # Barra punteggio validità canvas
 │   │   ├── sidebar/
-│   │   │   └── Sidebar.tsx          # Barra laterale icone (wizard, nuovo, salva, AI settings)
+│   │   │   └── Sidebar.tsx          # Icone rapide + toggle dark mode + reset
 │   │   ├── versioning/
-│   │   │   └── VersionPanel.tsx     # Snapshot e restore versioni canvas
+│   │   │   └── VersionPanel.tsx     # Snapshot e restore versioni per-branch
 │   │   └── wizard/
 │   │       └── StartupWizard.tsx    # Wizard onboarding 6 step
 │   ├── lib/
 │   │   ├── ai.ts                    # Client AI multi-provider (OpenAI-compat, Gemini, Ollama)
-│   │   └── score.ts                 # Calcolo validity score e contesti per prompt AI
+│   │   ├── score.ts                 # Calcolo validity score e contesti per prompt AI
+│   │   └── supabase/
+│   │       ├── client.ts            # Supabase client (browser)
+│   │       ├── middleware.ts        # Refresh sessione + protezione rotte
+│   │       └── server.ts            # Supabase client (server)
+│   ├── middleware.ts                 # Next.js middleware (auth)
 │   ├── stores/
-│   │   ├── aiConfig.ts              # Configurazione provider AI (persistito)
-│   │   ├── branches.ts              # Gestione branch canvas (persistito)
-│   │   ├── canvas.ts                # Stato principale BMC (persistito)
-│   │   ├── onboarding.ts            # Dati wizard onboarding (persistito)
-│   │   └── versions.ts              # Versioning snapshot (persistito)
+│   │   ├── aiConfig.ts              # Configurazione provider AI (Supabase)
+│   │   ├── aiFeedback.ts            # Feedback AI attivo nel pannello
+│   │   ├── branches.ts              # Gestione branch (Supabase)
+│   │   ├── canvas.ts                # Stato BMC (Supabase + auto-save debounced)
+│   │   ├── onboarding.ts            # Dati wizard (Supabase)
+│   │   ├── theme.ts                 # Tema dark/light (persistito localStorage)
+│   │   └── versions.ts              # Versioning in-memory (dentro branches)
 │   └── types/
 │       └── index.ts                 # Tutti i tipi TS e costanti BMC
+├── supabase/
+│   └── migrations/
+│       ├── 001_init.sql             # Tabelle canvases, branches, ai_configs + RLS
+│       └── 002_onboarding.sql       # Tabella onboarding + indici
 ├── .mcp.json                        # Configurazione MCP (next-devtools)
 ├── AGENTS.md                        # Regole per agent AI
 ├── next.config.ts                   # Configurazione Next.js
@@ -82,24 +110,18 @@ canvaspilot/
 
 ## 4. Funzionalità
 
-### 4.1 Business Model Canvas (Griglia 5×3)
+### 4.1 Business Model Canvas (Griglia 3×3)
 
-9 blocchi disposti nel layout standard del BMC:
+9 blocchi disposti in una griglia 3×3 bilanciata, con colori saturi per una migliore leggibilità:
 
 ```
-┌─────────────────┬───────────────────────┬─────────────────┐
-│ Key             │ Value                 │ Customer        │
-│ Partnerships    │ Propositions          │ Relationships   │
-├─────────────────┤                       ├─────────────────┤
-│ Key             │  (centrale,           │ Customer        │
-│ Activities      │   span 3 righe)       │ Segments        │
-├─────────────────┤                       ├─────────────────┤
-│ Key             │                       │ Channels        │
-│ Resources       │                       │                 │
-└─────────────────┴───────────────────────┴─────────────────┘
-┌─────────────────┐                       ┌─────────────────┐
-│ Cost Structure  │                       │ Revenue Streams │
-└─────────────────┘                       └─────────────────┘
+┌──────────────────┬──────────────────┬──────────────────┐
+│ Key Partnerships │ Value Propositions│ Customer Relat.  │
+├──────────────────┼──────────────────┼──────────────────┤
+│ Key Activities   │ Channels         │ Customer Segments│
+├──────────────────┼──────────────────┼──────────────────┤
+│ Key Resources    │ Cost Structure   │ Revenue Streams  │
+└──────────────────┴──────────────────┴──────────────────┘
 ```
 
 Ogni blocco supporta:
@@ -141,8 +163,8 @@ I dati del wizard alimentano tutti i prompt AI per contestualizzare le risposte.
 |----------|-------------|----------------|
 | **Compila BMC** | Popola automaticamente tutti i 9 blocchi basandosi sull'idea di business. Restituisce un JSON strutturato. | Pulsante "Compila BMC" nell'header e nel tab Idea |
 | **Analisi Canvas** | Analisi completa: mismatch, assunzioni non validate, opportunità, raccomandazioni top 3. | Pulsante "Analisi Canvas" nell'header |
-| **Suggerimenti (💡)** | Per blocco: 2-3 suggerimenti concreti per migliorare il blocco. | Pulsante in ogni blocco BMC |
-| **Domande (❓)** | Per blocco: 3 domande critiche per stimolare pensiero strategico. | Pulsante in ogni blocco BMC |
+| **Suggerimenti (💡)** | Per blocco: 2-3 item pronti da inserire con pulsante 「＋ Aggiungi」. Risultato nel pannello AI del RightPanel. | Pulsante in ogni blocco BMC |
+| **Domande (❓)** | Per blocco: 3 domande critiche sola lettura per stimolare pensiero strategico. Risultato nel pannello AI. | Pulsante in ogni blocco BMC |
 | **Test Connessione** | Verifica che la API key e il provider funzionino correttamente. | Pulsante "Test Connection" nelle impostazioni AI |
 
 Tutte le risposte AI sono in **italiano**.
@@ -151,7 +173,7 @@ Tutte le risposte AI sono in **italiano**.
 
 Accessibile dall'icona ⚙️ nella sidebar sinistra. La modale permette di:
 - Selezionare il provider (cambia automaticamente base URL e model di default)
-- Inserire la API key (salvata in localStorage)
+- Inserire la API key (salvata in Supabase, non in chiaro nel browser)
 - Modificare base URL e nome del modello
 - **Testare la connessione** prima di salvare
 
@@ -160,7 +182,7 @@ Accessibile dall'icona ⚙️ nella sidebar sinistra. La modale permette di:
 - **Salva versione**: crea uno snapshot completo del canvas corrente (icona 💾 nella sidebar)
 - **Ripristina versione**: torna a una qualsiasi versione precedente
 - **Visualizzazione**: elenco versioni con numero e timestamp nel pannello destro
-- Le versioni sono globali (non per-branch)
+- Le versioni sono **per-branch**: ogni branch ha le proprie versioni indipendenti
 
 ### 4.5 Branching
 
@@ -190,99 +212,162 @@ Visualizzato come barra colorata nell'header:
 | Breakpoint | Layout |
 |-----------|--------|
 | **Desktop (lg+)** | Sidebar 16px icone a sinistra + Griglia BMC centrale + Pannello DX 320px (4 tab: Versioni, Branch, Idea, Analisi) |
+| **Desktop (lg+)** | Sidebar 16px icone a sinistra + Griglia BMC centrale + Pannello DX 320px (5 tab: Versioni, Branch, Idea, AI, Analisi) |
 | **Mobile** | Header compatto + Sidebar a scomparsa + Floating button in basso a destra (Versioni, Branch, Analisi) + Bottom sheet |
 
+### 4.8 Dark Mode
+
+Toggle 🌙/☀️ nella sidebar (in fondo, sopra il reset). La preferenza è salvata in localStorage.
+
+Tutti i componenti supportano varianti dark:
+- Sfondi: `dark:bg-gray-900` / `dark:bg-gray-950`
+- Testi: `dark:text-gray-200` / `dark:text-gray-400`
+- Bordi: `dark:border-gray-700` / `dark:border-gray-800`
+- Modali e overlay: `dark:bg-black/60`
+- Blocchi BMC: `dark:bg-purple-900/20` con header `dark:bg-purple-800/40`
+- Input e textarea: `dark:bg-gray-800 dark:border-gray-600`
+
+Il tema usa la `class` strategy di Tailwind v4 con `@variant dark` nel CSS.
+
 ---
 
-## 5. API Endpoint
+## 5. Autenticazione
+
+### Supabase Auth (email/password)
+
+- **Pagine**: `/login` e `/signup` con form email/password
+- **Middleware**: protegge tutte le rotte tranne `/login` e `/signup`. Utenti non autenticati → redirect a `/login`
+- **UserMenu**: nell'header mostra avatar (iniziale email) + nome. Dropdown con logout.
+- **Database**: ogni tabella ha Row Level Security (`auth.uid() = user_id`) — gli utenti vedono solo i propri dati
+
+### Variabili d'ambiente richieste
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...
+```
+
+---
+
+## 6. API Endpoint
 
 ### `POST /api/ai`
+Proxy server-side per le chiamate AI. Evita CORS e usa la API key dal payload.
 
-Proxy server-side per le chiamate AI. Evita problemi CORS e non espone la API key al client.
+### `GET/PUT /api/canvas`
+Carica/salva il canvas del branch attivo per l'utente corrente (da Supabase `branches.canvas_data`).
 
-**Request:**
-```json
-{
-  "messages": [{ "role": "user", "content": "..." }],
-  "config": {
-    "provider": "openrouter",
-    "apiKey": "sk-...",
-    "baseUrl": "https://openrouter.ai/api/v1",
-    "model": "google/gemini-2.0-flash-001"
-  }
-}
-```
+### `GET/POST /api/branches`
+Lista tutti i branch dell'utente. POST crea un nuovo branch (disattiva gli altri, imposta `is_active = true`).
 
-**Response (successo):**
-```json
-{ "result": "risposta dell'AI..." }
-```
+### `PUT/DELETE /api/branches/[id]`
+Aggiorna (nome, is_active, versions, canvas_data) o cancella un branch (non-root).
 
-**Response (errore):**
-```json
-{ "error": "messaggio di errore in italiano" }
-```
+### `GET/PUT /api/ai-config`
+Carica/salva configurazione AI per utente (provider, API key, model) in `ai_configs`.
 
-Gestione errori specifica:
-- **401**: "API key non valida o scaduta. Verifica le impostazioni AI."
-- **404**: "Modello AI non trovato. Verifica il nome del modello nelle impostazioni."
+### `GET/PUT /api/onboarding`
+Carica/salva dati wizard onboarding in tabella `onboarding`.
+
+Tutti gli endpoint usano `createClient()` server-side di Supabase e sono protetti da RLS.
 
 ---
 
-## 6. Persistenza Dati
+## 7. Database (Supabase PostgreSQL)
 
-Tutti i dati sono salvati in **localStorage** tramite `zustand/middleware/persist`:
+Tutti i dati utente sono salvati in **Supabase PostgreSQL** con **Row Level Security**:
 
-| Store | Chiave localStorage | Contenuto |
-|-------|-------------------|-----------|
-| `canvas` | `canvaspilot-canvas` | Stato BMC (blocchi, item, note, validazioni) |
-| `aiConfig` | `canvaspilot-aiconfig` | Provider, API key, base URL, model |
-| `branches` | `canvaspilot-branches` | Lista branch con canvas indipendenti |
-| `versions` | `canvaspilot-versions` | Snapshot versioni canvas |
-| `onboarding` | `canvaspilot-onboarding` | Dati wizard + idea di business |
+### Tabelle
 
-> ⚠️ **Nota**: La API key è salvata in chiaro in localStorage. In produzione sarebbe opportuno usare un backend per gestire le credenziali.
+| Tabella | Contenuto | RLS |
+|---------|-----------|-----|
+| `branches` | Branch (name, parent_id, is_active, canvas_data, versions JSONB) | `auth.uid() = user_id` |
+| `ai_configs` | Config AI (provider, api_key, model) — UNIQUE per user | `auth.uid() = user_id` |
+| `onboarding` | Dati wizard (data JSONB, completed) — PK su user_id | `auth.uid() = user_id` |
+
+### Flusso Dati
+
+```
+All'avvio (DataLoader):
+  1. GET /api/branches      → se nuovo utente, POST branch "main"
+  2. GET /api/canvas         → carica canvas_data del branch attivo
+  3. GET /api/ai-config      → carica configurazione AI
+  4. GET /api/onboarding     → carica dati wizard
+
+Durante l'uso:
+  Canvas modificato → debounce 2s → PUT /api/canvas
+  Branch creato/scambiato → immediato → POST/PUT /api/branches
+  Versione salvata → immediato → PUT /api/branches/[id]
+  AI config salvata → immediato → PUT /api/ai-config
+  Wizard completato → immediato → PUT /api/onboarding
+```
+
+### Tema (unico dato in localStorage)
+
+| Store | Chiave | Contenuto |
+|-------|--------|-----------|
+| `theme` | `canvaspilot-theme` | Preferenza `light` / `dark` |
 
 ---
 
-## 7. Flusso Utente Tipico
+## 8. Flusso Utente Tipico
 
 ```
-1. Avvio applicazione
-   └─► Wizard onboarding (6 step)
+1. Registrazione / Login
+   └─► /signup → crea account (email/password)
+   └─► /login → accedi
+
+2. Avvio applicazione
+   └─► DataLoader carica dati da Supabase
+   └─► Wizard onboarding (6 step) se primo accesso
        └─► Descrive l'idea di business
 
-2. Configurazione AI
+3. Configurazione AI
    └─► Sidebar ⚙️ → seleziona provider → inserisci API key → Test Connection
 
-3. Compilazione Canvas
+4. Compilazione Canvas
    └─► Clicca "Compila BMC" → AI popola tutti i 9 blocchi
 
-4. Raffinamento
-   └─► Per ogni blocco: modifica item, usa AI (💡 suggerimenti / ❓ domande)
+5. Raffinamento
+   └─► Per ogni blocco: modifica item
+   └─► 💡 Suggerimenti AI → item nel pannello AI → 「＋ Aggiungi」per inserire
+   └─► ❓ Domande AI → domande critiche nel pannello (sola lettura)
 
-5. Analisi
+6. Analisi
    └─► "Analisi Canvas" → feedback strategico completo
 
-6. Iterazione
-   └─► Salva versioni (💾) per fare snapshot
+7. Iterazione
+   └─► Salva versioni (💾) per fare snapshot (per-branch)
    └─► Crea branch per esplorare scenari alternativi
+   └─► Auto-save: ogni modifica salvata su Supabase dopo 2s
 ```
 
 ---
 
-## 8. Deploy
+## 9. Deploy
 
-L'applicazione è configurata per il deploy su **Vercel**:
+L'applicazione è configurata per il deploy su **Vercel** con integrazione **Supabase**:
 
-```json
-{
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install"
-}
+- **Dominio**: `canvaspilot.vercel.app`
+- **Framework**: Next.js (rilevato automaticamente da Vercel)
+
+### Variabili d'ambiente (Vercel)
+
 ```
+NEXT_PUBLIC_SUPABASE_URL    # URL progetto Supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY  # Anon key Supabase
+SUPABASE_URL                # URL (server-side)
+SUPABASE_ANON_KEY           # Anon key (server-side)
+```
+
+### Setup Supabase
+
+1. Creare progetto su [supabase.com](https://supabase.com)
+2. Abilitare provider **Email/Password** in Authentication → Providers
+3. Eseguire le migration SQL (`supabase/migrations/`) nel SQL Editor
+4. Copiare URL e Anon Key nelle env var di Vercel
 
 ### Comandi Locali
 
@@ -295,12 +380,13 @@ L'applicazione è configurata per il deploy su **Vercel**:
 
 ---
 
-## 9. Possibili Evoluzioni
+## 10. Possibili Evoluzioni
 
-- **Autenticazione utente**: login per salvare dati su backend invece che localStorage
+- **OAuth (Google/GitHub)**: login social oltre a email/password
+- **Reset password**: flusso "password dimenticata"
 - **Export PDF/immagine**: esportare il canvas come report
 - **Collaborazione real-time**: più utenti sullo stesso canvas
 - **Template precompilati**: BMC per settori/industrie specifiche
-- **Cronologia undo/redo**: oltre al versioning manuale
+- **Confronto branch**: diff visuale tra diverse versioni/branch
+- **Import selettivo**: prendere blocchi specifici da un altro branch
 - **Prompt AI personalizzabili**: l'utente può modificare i prompt
-- **Integrazione canvas board**: vista Kanban dei blocchi

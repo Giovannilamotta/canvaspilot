@@ -22,6 +22,7 @@ export default function AISettings() {
   if (!isOpen) return null;
 
   const handleSave = () => {
+    useAIConfigStore.getState().saveToServer();
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     setTimeout(close, 800);
