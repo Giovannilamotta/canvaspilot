@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Branch, CanvasData } from "@/types";
+import { Branch, CanvasData, Version } from "@/types";
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10);
@@ -14,6 +14,9 @@ interface BranchStore {
   switchBranch: (branchId: string) => CanvasData | null;
   saveToActiveBranch: (canvas: CanvasData) => void;
   deleteBranch: (branchId: string) => void;
+  addVersionToActiveBranch: (canvas: CanvasData) => Version;
+  resetActiveBranchVersions: () => void;
+  getActiveBranchVersions: () => Version[];
   reset: () => void;
 }
 
@@ -74,6 +77,33 @@ export const useBranchStore = create<BranchStore>()(
               : s.activeBranchId,
           };
         }),
+      addVersionToActiveBranch: (canvas) => {
+        const newVersion: Version = {
+          id: generateId(),
+          number: 0,
+          timestamp: Date.now(),
+          canvas: JSON.parse(JSON.stringify(canvas)),
+        };
+        set((s) => ({
+          branches: s.branches.map((b) => {
+            if (b.id !== s.activeBranchId) return b;
+            newVersion.number = b.versions.length + 1;
+            return { ...b, versions: [...b.versions, newVersion] };
+          }),
+        }));
+        return newVersion;
+      },
+      resetActiveBranchVersions: () =>
+        set((s) => ({
+          branches: s.branches.map((b) =>
+            b.id === s.activeBranchId ? { ...b, versions: [] } : b
+          ),
+        })),
+      getActiveBranchVersions: () => {
+        const { branches, activeBranchId } = get();
+        const branch = branches.find((b) => b.id === activeBranchId);
+        return branch?.versions ?? [];
+      },
       reset: () => set({ branches: [], activeBranchId: null }),
     }),
     { name: "canvaspilot-branches" }

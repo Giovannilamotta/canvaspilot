@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { BlockId, BlockItem, CanvasData, DEFAULT_BLOCKS, Block } from "@/types";
 import { useVersionStore } from "./versions";
+import { useBranchStore } from "./branches";
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10);
@@ -105,10 +106,14 @@ export const useCanvasStore = create<CanvasStore>()(
         }),
       saveVersion: () => {
         const { canvas } = get();
-        useVersionStore.getState().addVersion(canvas);
+        const v = useBranchStore.getState().addVersionToActiveBranch(canvas);
+        useVersionStore.getState().loadVersions(
+          useBranchStore.getState().getActiveBranchVersions()
+        );
       },
       reset: () => {
         useVersionStore.getState().reset();
+        useBranchStore.getState().resetActiveBranchVersions();
         set({ canvas: { ...defaultCanvas } });
       },
       getBlock: (blockId) => get().canvas.blocks[blockId],

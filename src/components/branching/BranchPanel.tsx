@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useBranchStore } from "@/stores/branches";
+import { useVersionStore } from "@/stores/versions";
 import { useCanvasStore } from "@/stores/canvas";
 import { CanvasData } from "@/types";
 
@@ -29,6 +30,9 @@ export default function BranchPanel({ onClose }: Props) {
     const restored = switchBranch(branchId);
     if (restored) {
       setCanvas(restored as CanvasData);
+      useVersionStore.getState().loadVersions(
+        useBranchStore.getState().getActiveBranchVersions()
+      );
       setMessage("Switched branch");
       setTimeout(() => setMessage(""), 2000);
     }
