@@ -32,8 +32,8 @@ export default function VersionPanel({ onClose }: Props) {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-800">Versions</h3>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Versions</h3>
+        <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
           ✕
         </button>
       </div>
@@ -51,7 +51,7 @@ export default function VersionPanel({ onClose }: Props) {
 
       <div className="space-y-1 max-h-96 overflow-y-auto">
         {versions.length === 0 && (
-          <p className="text-xs text-gray-400 py-4 text-center">No versions yet</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 py-4 text-center">No versions yet</p>
         )}
         {[...versions].reverse().map((v, i) => {
           const actualIndex = versions.length - 1 - i;
@@ -62,12 +62,12 @@ export default function VersionPanel({ onClose }: Props) {
               onClick={() => handleRestore(actualIndex)}
               className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors ${
                 isActive
-                  ? "bg-purple-50 text-purple-700 border border-purple-200"
-                  : "hover:bg-gray-50 text-gray-600"
+                  ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
               }`}
             >
               <div className="font-medium">v{v.number}</div>
-              <div className="text-[10px] text-gray-400">
+              <div className="text-[10px] text-gray-400 dark:text-gray-500">
                 {new Date(v.timestamp).toLocaleString()}
               </div>
             </button>

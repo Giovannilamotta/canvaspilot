@@ -52,18 +52,18 @@ export default function AISettings() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+    <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-purple-900">AI Settings</h2>
-          <button onClick={close} className="text-gray-400 hover:text-gray-600">
+          <h2 className="text-lg font-semibold text-purple-900 dark:text-purple-400">AI Settings</h2>
+          <button onClick={close} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
             ✕
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
               Provider
             </label>
             <div className="grid grid-cols-5 gap-1">
@@ -78,7 +78,7 @@ export default function AISettings() {
                   className={`px-2 py-2 text-xs rounded-lg border transition-all ${
                     config.provider === p.value
                       ? "border-purple-500 bg-purple-50 text-purple-700"
-                      : "border-gray-200 text-gray-600 hover:border-gray-300"
+                      : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                   }`}
                 >
                   {p.label}
@@ -88,7 +88,7 @@ export default function AISettings() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
               API Key
             </label>
             <input
@@ -100,12 +100,12 @@ export default function AISettings() {
                 setConnectionError("");
               }}
               placeholder="sk-..."
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
+              className="w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-transparent dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
               Base URL
             </label>
             <input
@@ -116,12 +116,12 @@ export default function AISettings() {
                 setConnectionStatus("idle");
                 setConnectionError("");
               }}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
+              className="w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-transparent dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
               Model
             </label>
             <input
@@ -133,7 +133,7 @@ export default function AISettings() {
                 setConnectionError("");
               }}
               placeholder="gpt-4o"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
+              className="w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-transparent dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function AISettings() {
                 ? "bg-green-50 border-green-300 text-green-700"
                 : connectionStatus === "error"
                   ? "bg-red-50 border-red-300 text-red-700"
-                  : "bg-white border-gray-200 text-gray-600 hover:border-purple-300 hover:text-purple-600 disabled:opacity-40"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-purple-300 dark:hover:border-purple-600 hover:text-purple-600 dark:hover:text-purple-400 disabled:opacity-40"
             }`}
           >
             {connectionStatus === "testing"

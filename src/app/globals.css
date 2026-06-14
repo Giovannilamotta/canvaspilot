@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --color-canvas-bg: #fafafa;
   --color-canvas-purple: #7c3aed;
@@ -22,6 +24,10 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #d4d4d8 transparent;
+}
+
+.dark * {
+  scrollbar-color: #52525b transparent;
 }
 
 @keyframes fade-in {

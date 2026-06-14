@@ -20,7 +20,7 @@ export default function BMCEditor() {
   ];
 
   return (
-    <div className="flex-1 overflow-auto p-4 md:p-6">
+    <div className="flex-1 overflow-auto p-4 md:p-6 dark:bg-gray-950">
       <div
         className="grid gap-3 mx-auto"
         style={{

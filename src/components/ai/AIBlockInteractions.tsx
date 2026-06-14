@@ -98,18 +98,18 @@ export default function AIBlockInteractions({ blockId, blockTitle }: Props) {
   };
 
   return (
-    <div className="flex gap-1 mt-2 pt-2 border-t border-gray-100">
+    <div className="flex gap-1 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
       <button
         onClick={() => runInteraction("suggestions")}
         disabled={loading !== null}
-        className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+        className="flex-1 px-2 py-1 text-[10px] text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors disabled:opacity-50"
       >
         {loading === "suggestions" ? "..." : "💡 Suggerimenti"}
       </button>
       <button
         onClick={() => runInteraction("questionnaire")}
         disabled={loading !== null}
-        className="flex-1 px-2 py-1 text-[10px] text-purple-600 hover:bg-purple-50 rounded transition-colors disabled:opacity-50"
+        className="flex-1 px-2 py-1 text-[10px] text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition-colors disabled:opacity-50"
       >
         {loading === "questionnaire" ? "..." : "❓ Domande"}
       </button>

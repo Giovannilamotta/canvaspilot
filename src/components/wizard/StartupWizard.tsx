@@ -98,13 +98,13 @@ export default function StartupWizard() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 animate-fade-in">
+    <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg p-8 animate-fade-in border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-purple-900">CanvasPilot Setup</h2>
+          <h2 className="text-xl font-semibold text-purple-900 dark:text-purple-400">CanvasPilot Setup</h2>
           <button
             onClick={close}
-            className="text-gray-400 hover:text-gray-600 text-sm"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm"
           >
             Skip for now
           </button>
@@ -115,19 +115,19 @@ export default function StartupWizard() {
             <div
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
-                i <= step ? "bg-purple-500" : "bg-gray-200"
+                i <= step ? "bg-purple-500" : "bg-gray-200 dark:bg-gray-700"
               }`}
             />
           ))}
         </div>
 
-        <h3 className="text-sm font-medium text-gray-500 mb-3">
+        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
           Step {step + 1} of {steps.length} — {current.title}
         </h3>
 
         {isIdeaStep ? (
           <div className="mb-8">
-            <p className="text-xs text-gray-400 mb-2">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
               Descrivi la tua idea di business in modo che l&apos;AI possa aiutarti a popolare il canvas e darti feedback mirati.
             </p>
             <textarea
@@ -135,7 +135,7 @@ export default function StartupWizard() {
               onChange={(e) => setField("businessIdea", e.target.value)}
               placeholder="Es: Una piattaforma SaaS che aiuta i ristoranti a gestire le prenotazioni e ottimizzare i tavoli con AI predittiva..."
               rows={5}
-              className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 resize-none"
+              className="w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400 resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
             />
           </div>
         ) : (
@@ -147,7 +147,7 @@ export default function StartupWizard() {
                 className={`px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all ${
                   data[current.field] === opt.value
                     ? "border-purple-500 bg-purple-50 text-purple-700 shadow-sm"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-purple-200 hover:bg-purple-50/50"
+                    : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:border-purple-200 dark:hover:border-purple-700 hover:bg-purple-50/50 dark:hover:bg-purple-900/20"
                 }`}
               >
                 {opt.label}
@@ -160,7 +160,7 @@ export default function StartupWizard() {
           <button
             onClick={prev}
             disabled={step === 0}
-            className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-0"
+            className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-0"
           >
             Back
           </button>

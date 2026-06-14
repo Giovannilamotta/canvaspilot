@@ -64,7 +64,7 @@ Canvas:\n\n${canvasContext}`;
       <button
         onClick={runAnalysis}
         disabled={loading}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-50"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors disabled:opacity-50"
       >
         {loading ? (
           <span className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
@@ -75,22 +75,22 @@ Canvas:\n\n${canvasContext}`;
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-fade-in">
-            <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-purple-900">
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col animate-fade-in border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-purple-900 dark:text-purple-400">
                 Analisi Completa del Canvas
               </h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 ✕
               </button>
             </div>
-            <div className="p-6 overflow-y-auto whitespace-pre-wrap text-sm text-gray-700 leading-relaxed">
+            <div className="p-6 overflow-y-auto whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
               {error ? (
-                <p className="text-red-500">{error}</p>
+                <p className="text-red-500 dark:text-red-400">{error}</p>
               ) : (
                 result
               )}
@@ -100,7 +100,7 @@ Canvas:\n\n${canvasContext}`;
       )}
 
       {error && (
-        <span className="text-xs text-red-500 ml-2">{error}</span>
+        <span className="text-xs text-red-500 dark:text-red-400 ml-2">{error}</span>
       )}
     </>
   );

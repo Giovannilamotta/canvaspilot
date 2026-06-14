@@ -22,7 +22,7 @@ export default function AIFeedbackPanel() {
     return (
       <div className="p-6 text-center">
         <p className="text-2xl mb-2">🤖</p>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
           Usa 💡 o ❓ in un blocco<br />per ricevere feedback AI.
         </p>
       </div>
@@ -45,12 +45,12 @@ export default function AIFeedbackPanel() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-800 truncate pr-2">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate pr-2">
           {feedback.blockTitle}
         </h3>
         <button
           onClick={clearFeedback}
-          className="text-gray-400 hover:text-gray-600 shrink-0 text-xs"
+          className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 shrink-0 text-xs"
         >
           ✕
         </button>
@@ -60,8 +60,8 @@ export default function AIFeedbackPanel() {
         <span
           className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
             isSuggestions
-              ? "bg-purple-100 text-purple-700"
-              : "bg-amber-100 text-amber-700"
+              ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400"
+              : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
           }`}
         >
           {isSuggestions ? "💡 Suggerimenti" : "❓ Domande"}
@@ -74,8 +74,8 @@ export default function AIFeedbackPanel() {
             key={i}
             className={`rounded-lg border p-2.5 text-xs leading-relaxed ${
               isSuggestions
-                ? "bg-purple-50/50 border-purple-100"
-                : "bg-amber-50/50 border-amber-100"
+                ? "bg-purple-50/50 dark:bg-purple-900/10 border-purple-100 dark:border-purple-800"
+                : "bg-amber-50/50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-800"
             }`}
           >
             <div className="flex items-start gap-2">
@@ -86,7 +86,7 @@ export default function AIFeedbackPanel() {
               >
                 {isSuggestions ? i + 1 : `${i + 1}.`}
               </span>
-              <p className="flex-1 text-gray-700">{item}</p>
+              <p className="flex-1 text-gray-700 dark:text-gray-200">{item}</p>
               {isSuggestions && (
                 <button
                   onClick={() => handleInsert(i)}

@@ -23,14 +23,14 @@ export default function RightPanel() {
   }, [notifyCount]);
 
   return (
-    <div className="w-80 shrink-0 bg-white border-l border-gray-200 flex flex-col hidden lg:flex">
-      <div className="flex border-b border-gray-100">
+    <div className="w-80 shrink-0 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 flex flex-col hidden lg:flex">
+      <div className="flex border-b border-gray-100 dark:border-gray-800">
         <button
           onClick={() => setActivePanel(activePanel === "versions" ? null : "versions")}
           className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
             activePanel === "versions"
-              ? "text-purple-700 border-b-2 border-purple-500"
-              : "text-gray-400 hover:text-gray-600"
+              ? "text-purple-400 border-b-2 border-purple-400"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           }`}
         >
           Versions
@@ -39,8 +39,8 @@ export default function RightPanel() {
           onClick={() => setActivePanel(activePanel === "branches" ? null : "branches")}
           className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
             activePanel === "branches"
-              ? "text-purple-700 border-b-2 border-purple-500"
-              : "text-gray-400 hover:text-gray-600"
+              ? "text-purple-400 border-b-2 border-purple-400"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           }`}
         >
           Branches
@@ -49,8 +49,8 @@ export default function RightPanel() {
           onClick={() => setActivePanel(activePanel === "idea" ? null : "idea")}
           className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
             activePanel === "idea"
-              ? "text-purple-700 border-b-2 border-purple-500"
-              : "text-gray-400 hover:text-gray-600"
+              ? "text-purple-400 border-b-2 border-purple-400"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           }`}
         >
           Idea
@@ -59,8 +59,8 @@ export default function RightPanel() {
           onClick={() => setActivePanel(activePanel === "ai" ? null : "ai")}
           className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
             activePanel === "ai"
-              ? "text-purple-700 border-b-2 border-purple-500"
-              : "text-gray-400 hover:text-gray-600"
+              ? "text-purple-400 border-b-2 border-purple-400"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           }`}
         >
           AI
@@ -69,8 +69,8 @@ export default function RightPanel() {
           onClick={() => setActivePanel(activePanel === "analysis" ? null : "analysis")}
           className={`flex-1 py-2.5 text-[11px] font-medium transition-colors ${
             activePanel === "analysis"
-              ? "text-purple-700 border-b-2 border-purple-500"
-              : "text-gray-400 hover:text-gray-600"
+              ? "text-purple-400 border-b-2 border-purple-400"
+              : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           }`}
         >
           Analysis
@@ -86,18 +86,18 @@ export default function RightPanel() {
         )}
         {activePanel === "idea" && (
           <div className="p-4">
-            <h3 className="text-sm font-semibold text-gray-800 mb-3">La tua Idea di Business</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">La tua Idea di Business</h3>
             {data.businessIdea ? (
               <>
-                <div className="p-3 bg-purple-50 border border-purple-100 rounded-xl mb-3">
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <div className="p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-xl mb-3">
+                  <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
                     {data.businessIdea}
                   </p>
                 </div>
                 <AIFillCanvas className="w-full justify-center" />
               </>
             ) : (
-              <div className="p-4 text-center text-sm text-gray-300">
+              <div className="p-4 text-center text-sm text-gray-300 dark:text-gray-600">
                 <p className="mb-2 text-2xl">💡</p>
                 <p>Nessuna idea registrata</p>
                 <p className="text-xs mt-1">Completa il wizard per descrivere la tua idea di business</p>
@@ -108,12 +108,12 @@ export default function RightPanel() {
         {activePanel === "ai" && <AIFeedbackPanel />}
         {activePanel === "analysis" && (
           <div className="p-4">
-            <h3 className="text-sm font-semibold text-gray-800 mb-3">Analysis</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Analysis</h3>
             <AIAnalysis />
           </div>
         )}
         {!activePanel && (
-          <div className="p-6 text-center text-sm text-gray-300">
+          <div className="p-6 text-center text-sm text-gray-300 dark:text-gray-600">
             <p className="mb-2 text-3xl">📋</p>
             <p>Select a panel above</p>
           </div>

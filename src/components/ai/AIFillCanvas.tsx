@@ -143,18 +143,18 @@ Each "items" array must contain 2-4 specific, concrete items in Italian language
       </button>
 
       {showConfirm && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 animate-fade-in">
-            <h3 className="text-sm font-semibold text-gray-800 mb-2">
+        <div className="fixed inset-0 z-50 bg-black/30 dark:bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm p-6 animate-fade-in border border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
               Canvas già compilato
             </h3>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
               Il canvas contiene già dei dati. Vuoi sovrascriverli con la nuova compilazione AI?
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 text-xs text-gray-600 hover:bg-gray-50 rounded-lg"
+                className="px-4 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
               >
                 Annulla
               </button>

@@ -28,16 +28,16 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-canvas-bg">
+    <div className="h-full flex flex-col bg-canvas-bg dark:bg-gray-950">
       <StartupWizard />
       <AISettings />
 
       {/* Mobile Header */}
-      <header className="lg:hidden flex items-center justify-between px-3 py-2 bg-white border-b border-gray-200 shrink-0">
+      <header className="lg:hidden flex items-center justify-between px-3 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shrink-0">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-gray-600 p-1"
+            className="text-gray-600 dark:text-gray-400 p-1"
           >
             ☰
           </button>
@@ -50,10 +50,10 @@ export default function AppLayout() {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden lg:flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white shrink-0">
+      <header className="hidden lg:flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
         <div className="flex items-center gap-3">
           <span className="text-sm font-bold text-purple-600">CanvasPilot</span>
-          <span className="text-[10px] text-gray-400">Business Model Canvas</span>
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">Business Model Canvas</span>
         </div>
         <div className="flex items-center gap-1.5">
           <AIFillCanvas />
@@ -73,10 +73,10 @@ export default function AppLayout() {
         {mobileMenuOpen && (
           <>
             <div
-              className="lg:hidden fixed inset-0 z-40 bg-black/30"
+              className="lg:hidden fixed inset-0 z-40 bg-black/30 dark:bg-black/60"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-16 bg-white border-r border-gray-200 animate-slide-left">
+            <div className="lg:hidden fixed left-0 top-0 bottom-0 z-50 w-16 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 animate-slide-left">
               <Sidebar />
             </div>
           </>
@@ -91,13 +91,13 @@ export default function AppLayout() {
         {/* Mobile Floating Button */}
         <div className="lg:hidden fixed bottom-6 right-6 z-30">
           {floatingOpen && (
-            <div className="absolute bottom-14 right-0 mb-2 bg-white rounded-xl shadow-xl border border-gray-200 w-44 p-2 space-y-1 animate-fade-in">
+            <div className="absolute bottom-14 right-0 mb-2 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-44 p-2 space-y-1 animate-fade-in">
               <button
                 onClick={() => {
                   setMobilePanel("versions");
                   setFloatingOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 rounded-lg"
+                className="w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
               >
                 💾 Versions
               </button>
@@ -106,7 +106,7 @@ export default function AppLayout() {
                   setMobilePanel("branches");
                   setFloatingOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 rounded-lg"
+                className="w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
               >
                 🌿 Branches
               </button>
@@ -115,7 +115,7 @@ export default function AppLayout() {
                   setMobilePanel("analysis");
                   setFloatingOpen(false);
                 }}
-                className="w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 rounded-lg"
+                className="w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
               >
                 🔍 Analysis
               </button>
@@ -134,12 +134,12 @@ export default function AppLayout() {
       {mobilePanel && (
         <>
           <div
-            className="lg:hidden fixed inset-0 z-40 bg-black/30"
-            onClick={() => setMobilePanel(null)}
-          />
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl max-h-[60vh] overflow-y-auto animate-fade-in">
+            className="lg:hidden fixed inset-0 z-40 bg-black/30 dark:bg-black/60"
+              onClick={() => setMobilePanel(null)}
+            />
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-2xl shadow-2xl max-h-[60vh] overflow-y-auto animate-fade-in">
             <div className="flex justify-center pt-2 pb-1">
-              <div className="w-8 h-1 bg-gray-200 rounded-full" />
+              <div className="w-8 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
             </div>
             {mobilePanel === "versions" && (
               <VersionPanel onClose={() => setMobilePanel(null)} />
@@ -150,10 +150,10 @@ export default function AppLayout() {
             {mobilePanel === "analysis" && (
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-gray-800">Analysis</h3>
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Analysis</h3>
                   <button
                     onClick={() => setMobilePanel(null)}
-                    className="text-gray-400 hover:text-gray-600 text-sm"
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm"
                   >
                     ✕
                   </button>

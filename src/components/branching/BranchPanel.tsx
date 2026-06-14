@@ -41,8 +41,8 @@ export default function BranchPanel({ onClose }: Props) {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-800">Branches</h3>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Branches</h3>
+        <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
           ✕
         </button>
       </div>
@@ -52,7 +52,7 @@ export default function BranchPanel({ onClose }: Props) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="New branch name"
-          className="flex-1 px-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
+          className="flex-1 px-2 py-1.5 text-xs text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-gray-400"
         />
         <button
           type="submit"
@@ -74,8 +74,8 @@ export default function BranchPanel({ onClose }: Props) {
               key={b.id}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors ${
                 isActive
-                  ? "bg-purple-50 text-purple-700 border border-purple-200"
-                  : "hover:bg-gray-50 text-gray-600"
+                  ? "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
               }`}
             >
               <button
@@ -84,7 +84,7 @@ export default function BranchPanel({ onClose }: Props) {
               >
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    isActive ? "bg-purple-500" : "bg-gray-300"
+                    isActive ? "bg-purple-500" : "bg-gray-300 dark:bg-gray-600"
                   }`}
                 />
                 <span className="font-medium">
