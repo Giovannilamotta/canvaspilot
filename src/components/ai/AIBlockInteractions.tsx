@@ -16,7 +16,7 @@ interface Props {
 
 function parseAIResponse(text: string): string[] {
   const clean = text.trim();
-  const numberedMatch = clean.match(/(?:\d+[.)]\s+)(.*?)(?=(?:\n\d+[.)]\s+)|\n\n|$)/gs);
+  const numberedMatch = clean.match(/(?:\d+[.)]\s+)(.*?)(?=(?:\n\d+[.)]\s+)|\n\n|$)/g);
   if (numberedMatch && numberedMatch.length >= 1) {
     return numberedMatch
       .map((s) => s.replace(/^\d+[.)]\s+/, "").trim())
