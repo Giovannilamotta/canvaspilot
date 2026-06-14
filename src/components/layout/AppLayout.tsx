@@ -6,6 +6,7 @@ import BMCEditor from "@/components/bmc/BMCEditor";
 import ValidityScore from "@/components/score/ValidityScore";
 import RightPanel from "@/components/layout/RightPanel";
 import AIAnalysis from "@/components/ai/AIAnalysis";
+import AIFillCanvas from "@/components/ai/AIFillCanvas";
 import VersionPanel from "@/components/versioning/VersionPanel";
 import BranchPanel from "@/components/branching/BranchPanel";
 import StartupWizard from "@/components/wizard/StartupWizard";
@@ -42,7 +43,10 @@ export default function AppLayout() {
           </button>
           <span className="text-sm font-bold text-purple-600">CanvasPilot</span>
         </div>
-        <AIAnalysis />
+        <div className="flex items-center gap-1.5">
+          <AIFillCanvas />
+          <AIAnalysis />
+        </div>
       </header>
 
       {/* Desktop Header */}
@@ -51,7 +55,10 @@ export default function AppLayout() {
           <span className="text-sm font-bold text-purple-600">CanvasPilot</span>
           <span className="text-[10px] text-gray-400">Business Model Canvas</span>
         </div>
-        <AIAnalysis />
+        <div className="flex items-center gap-1.5">
+          <AIFillCanvas />
+          <AIAnalysis />
+        </div>
       </header>
 
       <ValidityScore />

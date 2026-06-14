@@ -4,6 +4,7 @@ import { useState } from "react";
 import AIAnalysis from "@/components/ai/AIAnalysis";
 import VersionPanel from "@/components/versioning/VersionPanel";
 import BranchPanel from "@/components/branching/BranchPanel";
+import AIFillCanvas from "@/components/ai/AIFillCanvas";
 import { useOnboardingStore } from "@/stores/onboarding";
 
 type Panel = "versions" | "branches" | "analysis" | "idea" | null;
@@ -68,11 +69,14 @@ export default function RightPanel() {
           <div className="p-4">
             <h3 className="text-sm font-semibold text-gray-800 mb-3">La tua Idea di Business</h3>
             {data.businessIdea ? (
-              <div className="p-3 bg-purple-50 border border-purple-100 rounded-xl">
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {data.businessIdea}
-                </p>
-              </div>
+              <>
+                <div className="p-3 bg-purple-50 border border-purple-100 rounded-xl mb-3">
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    {data.businessIdea}
+                  </p>
+                </div>
+                <AIFillCanvas className="w-full justify-center" />
+              </>
             ) : (
               <div className="p-4 text-center text-sm text-gray-300">
                 <p className="mb-2 text-2xl">💡</p>
